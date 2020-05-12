@@ -49,6 +49,7 @@ public class FraudDetectorService {
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, FraudDetectorService.class.getSimpleName());
         properties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, FraudDetectorService.class.getSimpleName() + "-" + UUID.randomUUID().toString());
+        properties.setProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG,"1");
         properties.setProperty("security.protocol", "SASL_PLAINTEXT");
         properties.setProperty("sasl.kerberos.service.name", "kafka");
         return properties;
