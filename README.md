@@ -48,3 +48,5 @@ O Numero maximo de parelizações será o numero maximo de partições
 ###### _**Descrever grupo de consumo**_
 >kafka-consumer-groups  --bootstrap-server ctn2.lab.local:9092,ctn3.lab.local:9092,ctn4.lab.local:9092,ctn5.lab.local:9092 --describe --group FraudDetectorService  --command-config consumer.propertiers
 
+###### _**Deletar um topico**_
+>kafka-topics  --bootstrap-server ctn2.lab.local:9092,ctn3.lab.local:9092,ctn4.lab.local:9092,ctn5.lab.local:9092 --delete --topic ECOMMERCE_NEW_ORDER --command-config consumer.propertiers

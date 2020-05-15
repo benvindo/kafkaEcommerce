@@ -8,38 +8,41 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-class KafkaService implements Closeable {
-    private final KafkaConsumer<String, String> consumer;
+class KafkaService<T> implements Closeable {
+    private final KafkaConsumer<String, T> consumer;
     private final ConsumerFunction parse;
 
-    KafkaService(String groupId, String topic, ConsumerFunction parse) {
-        this(parse,groupId);
+    KafkaService(String groupId, String topic, ConsumerFunction parse, Class<T> type, Map<String, String> properties) {
+        this(parse, groupId, type, properties);
         consumer.subscribe(Collections.singletonList(topic));
     }
 
-    KafkaService(String groupId, Pattern topic, ConsumerFunction parse) {
-        this(parse,groupId);
+    KafkaService(String groupId, Pattern topic, ConsumerFunction parse, Class<T> type, Map<String, String> properties) {
+        this(parse,groupId, type, properties);
         consumer.subscribe(topic);
     }
 
-    private KafkaService(ConsumerFunction parse, String groupId) {
+    private KafkaService(ConsumerFunction parse, String groupId, Class<T> type, Map<String, String> properties) {
         this.parse = parse;
-        this.consumer = new KafkaConsumer<>(properties(groupId));
+        this.consumer = new KafkaConsumer<>(getProperties(type, groupId, properties));
     }
 
-    public static Properties properties(String groupId){
+    public Properties getProperties(Class<T> type, String groupId, Map<String, String> overwriteProperties){
         var properties = new Properties();
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "ctn2.lab.local:9092,ctn3.lab.local:9092,ctn4.lab.local:9092,ctn5.lab.local:9092");
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, GsonDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         properties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, UUID.randomUUID().toString());
+        properties.setProperty(GsonDeserializer.TYPE_CONFIG, type.getName());
         properties.setProperty("security.protocol", "SASL_PLAINTEXT");
         properties.setProperty("sasl.kerberos.service.name", "kafka");
+        properties.putAll(overwriteProperties);
         return properties;
 
     }
