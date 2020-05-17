@@ -1,19 +1,8 @@
 package br.com.estudos;
 
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.log4j.Level;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-
-import java.time.Duration;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Properties;
-import java.util.UUID;
 
 public class FraudDetectorService {
 
