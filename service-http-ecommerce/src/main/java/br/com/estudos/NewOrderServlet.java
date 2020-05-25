@@ -42,9 +42,7 @@ public class NewOrderServlet extends HttpServlet {
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().println("New order sent successfully");
 
-        } catch (ExecutionException e) {
-            throw  new ServletException(e);
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             throw  new ServletException(e);
         }
     }

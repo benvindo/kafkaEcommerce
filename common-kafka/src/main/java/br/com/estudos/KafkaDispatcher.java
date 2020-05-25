@@ -22,7 +22,9 @@ class KafkaDispatcher<T> implements Closeable {
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "ctn2.lab.local:9092,ctn3.lab.local:9092,ctn4.lab.local:9092,ctn5.lab.local:9092");
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, GsonSerializer.class.getName());
-        properties.setProperty(ProducerConfig.ACKS_CONFIG, "1");
+        // Caso eu tenha N replicas eu so vou ter a garantia das N replicas se meu Acks for All
+        // Se meu Acks for 1 eu tenho  N replicas mas eu vou receber uma confirmação, talvez sendo que somente uma delas ficou sabendo
+        properties.setProperty(ProducerConfig.ACKS_CONFIG, "all");
         properties.setProperty("security.protocol", "SASL_PLAINTEXT");
         properties.setProperty("sasl.kerberos.service.name", "kafka");
         return properties;
