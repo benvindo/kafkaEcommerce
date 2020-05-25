@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class CreateUserService {
@@ -14,11 +15,17 @@ public class CreateUserService {
     private final Connection connection;
 
     CreateUserService () throws SQLException {
-        String url = "jdbs:target/sqlite:users_database.db";
+        String url = "jdbc:sqlite:target/sqlite:users_database.db";
         this.connection = DriverManager.getConnection(url);
+        try{
         connection.createStatement().execute("create table Users (" +
                 "uuid varchar(200) primary key," +
                 "email varchar(200))");
+        } catch (SQLException ex){
+            //be careful, the sql could be wrong, be realllly careful
+            ex.printStackTrace();
+        }
+
     }
 
     public static void main(String[] args) throws SQLException {
@@ -31,8 +38,6 @@ public class CreateUserService {
             service.run();
         }
     }
-
-    private final KafkaDispatcher<Order> orderDispatcher = new KafkaDispatcher<>();
 
     private void parse(ConsumerRecord<String, Order> record) throws SQLException {
         System.out.println("------------------------------------------");
@@ -48,9 +53,10 @@ public class CreateUserService {
 
     private void insertNewUser(String email) throws SQLException {
         var insert = connection.prepareStatement("insert into Users (uuid, email) values (?, ?)");
-        insert.setString( 1, "uuuid");
+        insert.setString( 1, UUID.randomUUID().toString());
         insert.setString( 2, email);
-        System.out.println("Usuario uuid" + email + "adicionado");
+        insert.execute();
+        System.out.println("Usuario uuid " + email + " adicionado");
     }
 
     private boolean isNewUser(String email) throws SQLException {
